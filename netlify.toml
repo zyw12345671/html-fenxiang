@@ -1,6 +1,7 @@
 [build]
   publish = "."
-  # 不需要构建命令，这是一个静态网站
+  command = "node build.js"
+  # 使用简单的构建脚本确保构建过程成功
 
 [functions]
   directory = "netlify/functions"
