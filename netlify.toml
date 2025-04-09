@@ -1,7 +1,8 @@
+# 简化构建配置
 [build]
-  publish = "."
-  command = "node build.js"
-  # 使用简单的构建脚本确保构建过程成功
+  # 不指定发布目录
+  # 无需构建命令
+  command = "echo '站点准备就绪'"
 
 [functions]
   directory = "netlify/functions"
