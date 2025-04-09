@@ -1,6 +1,6 @@
 [build]
-  publish = "dist"
-  command = "npm run build"
+  publish = "."
+  # 不需要构建命令，这是一个静态网站
 
 [functions]
   directory = "netlify/functions"
@@ -49,4 +49,4 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200 
+  status = 200
