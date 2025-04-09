@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi！HTML - 分享你的创意</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="public/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><a href="https://prismatic-sprinkles-2f2c01.netlify.app/" target="_blank">Hi！HTML</a></h1>
+            <p class="subtitle">分享你的创意</p>
+            <div class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </div>
+        </header>
+        
+        <main>
+            <div class="upload-container">
+                <div class="code-editor">
+                    <div class="editor-header">
+                        <div class="language-label">HTML</div>
+                    </div>
+                    <div class="editor-content">
+                        <textarea id="html-content" placeholder="在这里粘贴你的 HTML/Markdown/SVG/Mermaid 代码..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="buttons-container">
+                    <label for="file-input" class="btn upload-btn" id="dropzone">
+                        <i class="fas fa-file-upload"></i> 上传文件
+                    </label>
+                    <input type="file" id="file-input" style="display: none;" accept=".html,.htm,.md,.svg">
+                    
+                    <button class="btn clear-btn" id="clear-button">
+                        <i class="fas fa-trash-alt"></i> 清除
+                    </button>
+                    
+                    <button class="btn generate-btn" id="generate-link">
+                        <i class="fas fa-link"></i> 生成链接
+                    </button>
+                </div>
+            </div>
+            
+            <div class="result-container" id="result" style="display: none;">
+                <h2>链接已生成</h2>
+                <div class="link-box">
+                    <input type="text" id="generated-link" class="link-display" readonly>
+                    <div class="link-actions">
+                        <button class="btn action-btn copy-btn" id="copy-link" title="复制链接">
+                            <i class="far fa-copy"></i> 复制链接
+                        </button>
+                        <a href="#" class="btn action-btn visit-btn" id="visit-link" target="_blank" title="访问链接">
+                            <i class="fas fa-external-link-alt"></i> 打开链接
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <div class="footer-links">
+                <a href="/admin" class="admin-link"><i class="fas fa-user-shield"></i> 管理入口</a>
+            </div>
+            <p>&copy; Hi！HTML - 简单的HTML代码分享工具</p>
+        </footer>
+    </div>
+    
+    <script src="public/js/script.js"></script>
+</body>
+</html> 

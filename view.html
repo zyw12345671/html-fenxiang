@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查看HTML内容 - Hi！HTML</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // 从URL中获取文件ID
+        const pathParts = window.location.pathname.split('/');
+        const fileId = pathParts[pathParts.length - 1];
+
+        async function loadContent() {
+            try {
+                const response = await fetch(`/api/getContent/${fileId}`);
+                
+                if (!response.ok) {
+                    throw new Error('内容加载失败');
+                }
+
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || '无法获取内容');
+                }
+
+                // 将HTML内容写入页面
+                document.write(data.content);
+                document.close();
+
+            } catch (error) {
+                document.body.innerHTML = `
+                    <div style="padding: 20px; text-align: center; font-family: sans-serif;">
+                        <h1>加载失败</h1>
+                        <p>${error.message}</p>
+                        <p><a href="/">返回首页</a></p>
+                    </div>
+                `;
+            }
+        }
+
+        // 加载内容
+        loadContent();
+    </script>
+</body>
+</html>

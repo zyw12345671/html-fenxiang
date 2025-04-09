@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML预览 - Hi！HTML</title>
+    <style>
+        /* 重置样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 模板页眉样式 */
+        .template-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #0a1128;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .template-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .template-header a {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .template-header a:hover {
+            text-decoration: underline;
+        }
+        
+        /* 内容容器 */
+        .content-container {
+            margin-top: 50px; /* 为页眉腾出空间 */
+        }
+    </style>
+</head>
+<body>
+    <div class="template-header">
+        <h3>HTML预览 - Hi！HTML</h3>
+        <a href="/" target="_blank">创建您自己的HTML分享</a>
+    </div>
+    
+    <div class="content-container">
+        <!-- 此处将插入用户的HTML内容 -->
+        {{HTML_CONTENT}}
+    </div>
+</body>
+</html> 

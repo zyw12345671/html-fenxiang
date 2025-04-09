@@ -1,0 +1,32 @@
+{
+  "name": "hi-html",
+  "version": "1.0.0",
+  "description": "一个简单的HTML代码分享平台",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build.js",
+    "start": "netlify dev"
+  },
+  "keywords": [
+    "html",
+    "share",
+    "code",
+    "cloudflare"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@netlify/functions": "^3.0.4",
+    "axios": "^1.6.0",
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "netlify-cli": "^12.14.0",
+    "wrangler": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

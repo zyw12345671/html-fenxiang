@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi！HTML - 管理面板</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* 管理面板特定样式 */
+        .admin-panel {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .login-area {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .content-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .content-table th,
+        .content-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .content-table th {
+            background-color: var(--accent-color2);
+            color: var(--text-color);
+            font-weight: bold;
+        }
+        
+        .content-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .content-table tr:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .action-btn {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            color: var(--text-color);
+        }
+        
+        .delete-btn {
+            color: #e74c3c;
+        }
+        
+        .view-btn {
+            color: var(--accent-color1);
+        }
+        
+        .action-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pagination button {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .pagination button:hover {
+            background-color: var(--accent-color1);
+        }
+        
+        .pagination button.active {
+            background-color: var(--accent-color1);
+            color: white;
+        }
+        
+        .stats {
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color1);
+        }
+        
+        .no-content {
+            text-align: center;
+            padding: 40px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .header-back {
+            display: inline-block;
+            margin-right: 10px;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        
+        /* 加载动画 */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-color1);
+            animation: spin 1s ease-in-out infinite;
+            margin: 40px auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <a href="/" class="header-back"><i class="fas fa-arrow-left"></i></a>
+                Hi！HTML - 管理面板
+            </h1>
+            <div class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </div>
+        </header>
+        
+        <main class="admin-panel">
+            <div id="login-area" class="login-area">
+                <h2>管理员登录</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="admin-key">管理员密钥</label>
+                        <input type="password" id="admin-key" placeholder="请输入管理员密钥" required>
+                    </div>
+                    <button type="submit" class="btn">登录</button>
+                </form>
+            </div>
+            
+            <div id="content-area" style="display: none;">
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="total-count">0</div>
+                        <div>总HTML文件</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="today-count">0</div>
+                        <div>今日新增</div>
+                    </div>
+                </div>
+                
+                <h2>HTML文件列表</h2>
+                
+                <div id="loading" class="spinner"></div>
+                
+                <div id="content-list" style="display: none;">
+                    <table class="content-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>预览</th>
+                                <th>创建日期</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="content-tbody">
+                            <!-- 内容将通过JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="pagination" id="pagination">
+                        <!-- 分页按钮将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <div id="no-content" class="no-content" style="display: none;">
+                    <p>暂无HTML文件。</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 深色模式切换
+            const themeToggle = document.querySelector('.theme-toggle');
+            const body = document.documentElement;
+            
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('light-mode');
+            });
+            
+            // 获取DOM元素
+            const loginArea = document.getElementById('login-area');
+            const contentArea = document.getElementById('content-area');
+            const loginForm = document.getElementById('login-form');
+            const adminKeyInput = document.getElementById('admin-key');
+            const loading = document.getElementById('loading');
+            const contentList = document.getElementById('content-list');
+            const noContent = document.getElementById('no-content');
+            const contentTbody = document.getElementById('content-tbody');
+            const pagination = document.getElementById('pagination');
+            const totalCount = document.getElementById('total-count');
+            const todayCount = document.getElementById('today-count');
+            
+            // 存储管理员密钥
+            let adminKey = localStorage.getItem('hihtml-admin-key');
+            
+            // 检查是否已登录
+            if (adminKey) {
+                loginArea.style.display = 'none';
+                contentArea.style.display = 'block';
+                loadContentList();
+            }
+            
+            // 登录处理
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                adminKey = adminKeyInput.value.trim();
+                if (!adminKey) {
+                    showToast('请输入管理员密钥', true);
+                    return;
+                }
+                
+                // 保存管理员密钥并加载内容
+                localStorage.setItem('hihtml-admin-key', adminKey);
+                loginArea.style.display = 'none';
+                contentArea.style.display = 'block';
+                loadContentList();
+            });
+            
+            // 每页显示的数量
+            const itemsPerPage = 10;
+            let currentPage = 1;
+            let contentItems = [];
+            
+            // 加载内容列表
+            async function loadContentList() {
+                try {
+                    loading.style.display = 'block';
+                    contentList.style.display = 'none';
+                    noContent.style.display = 'none';
+                    
+                    const response = await fetch('/api/listContent', {
+                        headers: {
+                            'Authorization': `Bearer ${adminKey}`
+                        }
+                    });
+                    
+                    if (response.status === 401) {
+                        // 未授权，清除密钥并返回登录页
+                        localStorage.removeItem('hihtml-admin-key');
+                        loginArea.style.display = 'block';
+                        contentArea.style.display = 'none';
+                        showToast('管理员密钥验证失败', true);
+                        return;
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(`服务器错误: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (!data.success) {
+                        throw new Error(data.message || '获取内容列表失败');
+                    }
+                    
+                    // 保存内容列表
+                    contentItems = data.items || [];
+                    
+                    // 更新统计信息
+                    totalCount.textContent = contentItems.length;
+                    
+                    // 计算今日上传数量
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const todayTimestamp = today.getTime();
+                    
+                    const todayItems = contentItems.filter(item => item.timestamp >= todayTimestamp);
+                    todayCount.textContent = todayItems.length;
+                    
+                    // 显示内容或无内容提示
+                    if (contentItems.length > 0) {
+                        renderContentList();
+                        contentList.style.display = 'block';
+                        noContent.style.display = 'none';
+                    } else {
+                        contentList.style.display = 'none';
+                        noContent.style.display = 'block';
+                    }
+                    
+                } catch (error) {
+                    showToast(error.message || '加载内容列表失败', true);
+                    console.error('加载内容列表错误:', error);
+                } finally {
+                    loading.style.display = 'none';
+                }
+            }
+            
+            // 渲染内容列表
+            function renderContentList() {
+                // 计算当前页的内容
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = Math.min(startIndex + itemsPerPage, contentItems.length);
+                const currentItems = contentItems.slice(startIndex, endIndex);
+                
+                // 清空表格内容
+                contentTbody.innerHTML = '';
+                
+                // 添加内容行
+                currentItems.forEach(item => {
+                    const row = document.createElement('tr');
+                    
+                    // ID列
+                    const idCell = document.createElement('td');
+                    idCell.textContent = item.id;
+                    row.appendChild(idCell);
+                    
+                    // 预览列
+                    const previewCell = document.createElement('td');
+                    previewCell.textContent = item.preview;
+                    row.appendChild(previewCell);
+                    
+                    // 创建日期列
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = item.created;
+                    row.appendChild(dateCell);
+                    
+                    // 操作列
+                    const actionCell = document.createElement('td');
+                    
+                    // 查看按钮
+                    const viewBtn = document.createElement('button');
+                    viewBtn.className = 'action-btn view-btn';
+                    viewBtn.innerHTML = '<i class="fas fa-eye"></i>';
+                    viewBtn.title = '查看HTML';
+                    viewBtn.addEventListener('click', () => {
+                        window.open(`/view/${item.id}`, '_blank');
+                    });
+                    actionCell.appendChild(viewBtn);
+                    
+                    // 删除按钮
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'action-btn delete-btn';
+                    deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    deleteBtn.title = '删除HTML';
+                    deleteBtn.addEventListener('click', () => {
+                        if (confirm(`确定要删除ID为 ${item.id} 的HTML内容吗？`)) {
+                            deleteContent(item.id);
+                        }
+                    });
+                    actionCell.appendChild(deleteBtn);
+                    
+                    row.appendChild(actionCell);
+                    
+                    contentTbody.appendChild(row);
+                });
+                
+                // 更新分页
+                renderPagination();
+            }
+            
+            // 渲染分页
+            function renderPagination() {
+                pagination.innerHTML = '';
+                
+                const totalPages = Math.ceil(contentItems.length / itemsPerPage);
+                
+                // 如果总页数小于等于1，不显示分页
+                if (totalPages <= 1) {
+                    return;
+                }
+                
+                // 上一页按钮
+                const prevBtn = document.createElement('button');
+                prevBtn.innerHTML = '&laquo;';
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderContentList();
+                    }
+                });
+                pagination.appendChild(prevBtn);
+                
+                // 页码按钮
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = i;
+                    pageBtn.className = i === currentPage ? 'active' : '';
+                    pageBtn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderContentList();
+                    });
+                    pagination.appendChild(pageBtn);
+                }
+                
+                // 下一页按钮
+                const nextBtn = document.createElement('button');
+                nextBtn.innerHTML = '&raquo;';
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.addEventListener('click', () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderContentList();
+                    }
+                });
+                pagination.appendChild(nextBtn);
+            }
+            
+            // 删除内容
+            async function deleteContent(id) {
+                try {
+                    loading.style.display = 'block';
+                    
+                    const response = await fetch(`/api/deleteContent/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${adminKey}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`服务器错误: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (!data.success) {
+                        throw new Error(data.message || '删除内容失败');
+                    }
+                    
+                    showToast('内容已成功删除', false);
+                    
+                    // 重新加载内容列表
+                    loadContentList();
+                    
+                } catch (error) {
+                    showToast(error.message || '删除内容失败', true);
+                    console.error('删除内容错误:', error);
+                } finally {
+                    loading.style.display = 'none';
+                }
+            }
+            
+            // 显示提示消息
+            function showToast(message, isError) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                
+                if (isError) {
+                    toast.style.backgroundColor = '#e05d44';
+                } else {
+                    toast.style.backgroundColor = '#4ecdc4';
+                }
+                
+                document.body.appendChild(toast);
+                
+                // 显示提示
+                setTimeout(() => {
+                    toast.style.transform = 'translateX(-50%) translateY(0)';
+                    toast.style.opacity = '1';
+                }, 10);
+                
+                // 隐藏提示
+                setTimeout(() => {
+                    toast.style.transform = 'translateX(-50%) translateY(100px)';
+                    toast.style.opacity = '0';
+                    
+                    // 移除元素
+                    setTimeout(() => {
+                        document.body.removeChild(toast);
+                    }, 300);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html> 
